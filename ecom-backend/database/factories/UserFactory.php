@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'role' => 'user',
             'phone' => fake()->phoneNumber(),
-            'status' => true,
+            'status' => 'active',
             'profile_image' => null,
         ];
     }

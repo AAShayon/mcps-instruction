@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image_path')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->string('status')->default('active');
             $table->timestamps();
             
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
