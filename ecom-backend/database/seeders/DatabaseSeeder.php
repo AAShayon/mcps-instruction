@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,7 +13,38 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create admin user
+        User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'phone' => '1234567890',
+            'status' => 'active',
+            'profile_image' => null,
+        ]);
+
+        // Create user
+        User::create([
+            'name' => 'Regular User',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+            'phone' => '0987654321',
+            'status' => 'active',
+            'profile_image' => null,
+        ]);
+
+        // Create rider
+        User::create([
+            'name' => 'Rider User',
+            'email' => 'rider@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'rider',
+            'phone' => '1122334455',
+            'status' => 'active',
+            'profile_image' => null,
+        ]);
 
         $this->call([
             EcommerceSeeder::class,
