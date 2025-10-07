@@ -143,3 +143,17 @@ Complete the multi-role e-commerce platform with Admin, User, and Rider function
 - Add comprehensive logging
 - Ensure mobile responsiveness
 - Follow security best practices
+- 
+- 
+- 
+  Admin:                                                                │
+  │    - Email: admin@ecommerce.test                                         │
+  │    - Password: password123                                               │
+  │                                                                          │
+  │    User:                                                                 │
+  │    - Email: user@ecommerce.test                                          │
+  │    - Password: password123                                               │
+  │                                                                          │
+  │    Rider:                                                                │
+  │    - Email: rider@ecommerce.test                                         │
+  │    - Password: password123       
