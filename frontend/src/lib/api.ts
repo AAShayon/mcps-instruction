@@ -12,4 +12,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const getProducts = () => api.get('/api/products');
+
+export const getProductById = (id: string) => api.get(`/api/products/${id}`);
+
 export default api;
