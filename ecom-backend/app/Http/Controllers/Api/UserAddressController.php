@@ -14,7 +14,7 @@ class UserAddressController extends Controller
      */
     public function index(): JsonResponse
     {
-        $addresses = UserAddress::all();
+        $addresses = UserAddress::where('user_id', auth()->id())->get();
         return response()->json($addresses);
     }
 
@@ -24,7 +24,6 @@ class UserAddressController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -37,6 +36,9 @@ class UserAddressController extends Controller
             'country' => 'required|string|max:255',
             'is_default' => 'boolean',
         ]);
+
+        // Add the authenticated user's ID to the validated data
+        $validated['user_id'] = $request->user()->id;
 
         $address = UserAddress::create($validated);
 
@@ -57,10 +59,9 @@ class UserAddressController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $address = UserAddress::findOrFail($id);
+        $address = UserAddress::where('user_id', auth()->id())->findOrFail($id);
 
         $validated = $request->validate([
-            'user_id' => 'exists:users,id',
             'first_name' => 'string|max:255',
             'last_name' => 'string|max:255',
             'email' => 'email|max:255',
@@ -84,7 +85,7 @@ class UserAddressController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $address = UserAddress::findOrFail($id);
+        $address = UserAddress::where('user_id', auth()->id())->findOrFail($id);
         $address->delete();
 
         return response()->json(null, 204);

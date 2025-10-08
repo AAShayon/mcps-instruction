@@ -22,6 +22,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|in:admin,user,rider',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         $user = User::create([
@@ -29,6 +30,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'phone' => $validated['phone'] ?? null,
         ]);
 
         // Create token for the user
@@ -83,5 +85,22 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         return response()->json($request->user());
+    }
+
+    /**
+     * Update authenticated user
+     */
+    public function update(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $request->user()->id,
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json($user);
     }
 }

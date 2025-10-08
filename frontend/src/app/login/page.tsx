@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,86 +19,118 @@ export default function Login() {
     setError('');
 
     try {
-      const response = await api.post('/login', { email, password });
-      const { user, token } = response.data;
-      localStorage.setItem('token', token);
+      await login(email, password);
 
-      // Redirect based on role
-      switch (user.role) {
-        case 'admin':
-          router.push('/admin/dashboard');
-          break;
-        case 'user':
-          router.push('/user/dashboard');
-          break;
-        case 'rider':
-          router.push('/rider/dashboard');
-          break;
-        default:
-          router.push('/');
-      }
+      // Redirect based on role (we'll need to get user details after login)
+      // For now, redirect to profile
+      router.push('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="min-h-screen bg-gray-100">
+      {/* Top Bar */}
+      <div className="bg-red-600 text-white text-sm py-2">
+        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <span>Sell on ansteches</span>
+            <span>|</span>
+            <span>Help & Support</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <span>Customer Service</span>
+            <span>|</span>
+            <span>Download App</span>
+          </div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+      </div>
+
+      {/* Header with Logo */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-center">
+          <div className="text-3xl font-bold text-red-600">
+            ansteches<span className="text-black">.shop</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-md mx-auto py-8 px-4">
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login to your account</h2>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
+                Email
+              </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-red-600 text-gray-900"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div>
+            
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-2">
+                Password
+              </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-red-600 text-gray-900"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            {error && <div className="text-red-600 text-sm text-center mb-4">{error}</div>}
+
+            <div className="mb-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 disabled:opacity-50"
+              >
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+            </div>
+          </form>
+
+          <div className="text-center text-sm text-gray-600 mb-4">
+            <a href="#" className="text-red-600 hover:underline">Forgot Password?</a>
           </div>
 
-          {error && <div className="text-red-600 text-sm text-center">{error}</div>}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-
-          <div className="text-sm text-center">
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Create a new account
+          <div className="text-center text-sm text-gray-600">
+            New to ansteches.shop?{' '}
+            <Link href="/register" className="text-red-600 font-medium hover:underline">
+              Sign up
             </Link>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          <p>By continuing, you agree to our Terms & Conditions and Privacy Policy</p>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-sm">&copy; 2025 ansteches.shop. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -21,9 +21,16 @@ export default function Products() {
     const fetchProducts = async () => {
       try {
         const response = await api.get('/products');
-        setProducts(response.data.data);
-      } catch (err) {
-        setError('Failed to load products');
+        // Handle different response formats
+        if (Array.isArray(response.data)) {
+          setProducts(response.data);
+        } else if (response.data && response.data.data) {
+          setProducts(response.data.data);
+        } else {
+          setProducts([]);
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -42,8 +49,12 @@ export default function Products() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              {product.image_path && (
-                <img src={`/storage/${product.image_path}`} alt={product.name} className="w-full h-48 object-cover" />
+              {product.image_path ? (
+                <img src={product.image_path} alt={product.name} className="w-full h-48 object-cover" />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500">No image</span>
+                </div>
               )}
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2">{product.name}</h3>

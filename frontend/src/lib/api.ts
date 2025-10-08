@@ -5,14 +5,21 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  // Check if we're on the client side before accessing localStorage
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });
 
-export const getProducts = () => api.get('/api/products');
+export const getProducts = async () => {
+  const response = await api.get('/api/products');
+  // Return the response directly since the backend returns the array directly
+  return response;
+};
 
 export const getProductById = (id: string) => api.get(`/api/products/${id}`);
 
