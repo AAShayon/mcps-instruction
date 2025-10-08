@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import { COLORS, COMPONENT_STYLES, GRADIENTS, TEXT_STYLES, ICON_STYLES } from '@/utils/colors';
+import { TYPOGRAPHY } from '@/utils/typography';
 
 interface Product {
   id: number;
@@ -40,27 +42,27 @@ export default function Products() {
   }, []);
 
   if (loading) return <div className="text-center py-8">Loading...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
+  if (error) return <div className={`text-center py-8 ${COLORS.status.error}`}>{error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Products</h1>
+        <h1 className={`${TYPOGRAPHY.fontSize.h1} font-bold mb-8 ${COLORS.text.primary}`}>Products</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={product.id} className={`${COMPONENT_STYLES.card.base} overflow-hidden`}>
               {product.image_path ? (
                 <img src={product.image_path} alt={product.name} className="w-full h-48 object-cover" />
               ) : (
                 <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">No image</span>
+                  <span className={`${COLORS.text.tertiary}`}>No image</span>
                 </div>
               )}
               <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                <p className="text-gray-600 mb-2">{product.description}</p>
-                <p className="text-xl font-bold text-indigo-600">${product.price}</p>
-                <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+                <h3 className={`${TYPOGRAPHY.fontSize.h4} font-semibold mb-2 ${COLORS.text.primary}`}>{product.name}</h3>
+                <p className={`${COLORS.text.secondary} mb-2`}>{product.description}</p>
+                <p className={`text-xl font-bold ${COLORS.text.primary}`}>${product.price}</p>
+                <button className={`${COMPONENT_STYLES.button.primary} mt-4 w-full`}>
                   Add to Cart
                 </button>
               </div>
