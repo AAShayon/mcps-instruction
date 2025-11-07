@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/aws/amazon-q-developer-cli/refs/heads/main/schemas/agent-v1.json",
+  "name": "fullstack-dev",
+  "description": "Full-stack development agent with Next.js and Laravel/PHP MCP servers for any project",
+  "mcpServers": {
+    "workspace-filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem@latest"],
+      "env": {
+        "ALLOWED_DIRECTORIES": "/Users/md.asifafrojshayon/PhpstormProjects"
+      }
+    },
+    "nextjs-tools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"],
+      "env": {
+        "NEXT_PROJECT_PATH": "/Users/md.asifafrojshayon/PhpstormProjects"
+      }
+    }
+  },
+  "tools": [
+    "fs_read",
+    "fs_write",
+    "execute_bash",
+    "use_aws",
+    "@workspace-filesystem",
+    "@nextjs-tools"
+  ]
+}
